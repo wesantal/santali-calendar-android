@@ -23,4 +23,4 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "Santali Calendar"
-include(":app")
+include(":library")
