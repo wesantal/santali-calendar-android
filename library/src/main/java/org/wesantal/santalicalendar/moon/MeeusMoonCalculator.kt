@@ -22,7 +22,7 @@ object MeeusMoonCalculator {
     const val IST_OFFSET_MS = (5.5 * 60 * 60 * 1000).toLong()
     const val METONIC_CYCLE_START = 2026
     val METONIC_LEAP_POS = setOf(1, 4, 7, 9, 12, 15, 18)
-    const val ANCHOR_NM_MS = 1674358980000L // 2023-01-22T02:23:00+05:30
+    const val ANCHOR_NM_MS = 1674334380000L // 2023-01-22T02:23:00+05:30
 
     private val SANTALI_MONTHS_BASE = listOf(
         SantaliMonthId.MAG,
@@ -54,7 +54,7 @@ object MeeusMoonCalculator {
 
     fun cosDeg(degrees: Double): Double = cos(degToRad(degrees))
 
-    private fun julianDayToUnixMs(jd: Double): Double = (jd - JULIAN_UNIX_EPOCH) * MS_PER_DAY
+    private fun julianDayToUnixMs(jd: Double): Double = kotlin.math.round((jd - JULIAN_UNIX_EPOCH) * MS_PER_DAY)
 
     fun unixMsToJulianDay(ms: Double): Double = ms / MS_PER_DAY + JULIAN_UNIX_EPOCH
 
@@ -126,7 +126,11 @@ object MeeusMoonCalculator {
     }
 
     private fun newMoonCorrection(args: LunarArguments): Double {
-        val (m, mp, f, om, e) = args
+        val m = args.m
+        val mp = args.mp
+        val f = args.f
+        val om = args.om
+        val e = args.e
         return -0.4072 * sinDeg(mp) +
                 0.17241 * e * sinDeg(m) +
                 0.01608 * sinDeg(2 * mp) +
@@ -155,7 +159,11 @@ object MeeusMoonCalculator {
     }
 
     private fun fullMoonCorrection(args: LunarArguments): Double {
-        val (m, mp, f, om, e) = args
+        val m = args.m
+        val mp = args.mp
+        val f = args.f
+        val om = args.om
+        val e = args.e
         return -0.40614 * sinDeg(mp) +
                 0.17302 * e * sinDeg(m) +
                 0.01614 * sinDeg(2 * mp) +

@@ -348,4 +348,46 @@ class MeeusMoonCalculatorTest {
         val result = MeeusMoonCalculator.getCalendarMonthIndex(Date())
         assertTrue("Calendar month index should be >= 0", result >= 0)
     }
+
+    @Test
+    fun `Mag 2026 Chandradarshan matches Dart reference`() {
+        val magStartMoon = MeeusMoonCalculator.getMagStartMoon(2026)
+        val chandradarshan = MeeusMoonCalculator.getChandradarshan(magStartMoon)
+        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        cal.timeInMillis = chandradarshan
+        assertEquals("Year should be 2026", 2026, cal.get(Calendar.YEAR))
+        assertEquals("Month should be January", Calendar.JANUARY, cal.get(Calendar.MONTH))
+        assertEquals("Day should be 19", 19, cal.get(Calendar.DAY_OF_MONTH))
+        assertEquals("Hour should be 11", 11, cal.get(Calendar.HOUR_OF_DAY))
+        assertEquals("Minute should be 30", 30, cal.get(Calendar.MINUTE))
+    }
+
+    @Test
+    fun `Mag 2026 new moon on Jan 18 after 5PM IST`() {
+        val magStartMoon = MeeusMoonCalculator.getMagStartMoon(2026)
+        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        cal.timeInMillis = magStartMoon
+        assertEquals("New moon year should be 2026", 2026, cal.get(Calendar.YEAR))
+        assertEquals("New moon month should be January", Calendar.JANUARY, cal.get(Calendar.MONTH))
+        assertEquals("New moon day should be 18", 18, cal.get(Calendar.DAY_OF_MONTH))
+        assertTrue("New moon hour should be >= 17", cal.get(Calendar.HOUR_OF_DAY) >= 17)
+    }
+
+    @Test
+    fun `getNewMoon 322 produces correct date`() {
+        val nm = MeeusMoonCalculator.getNewMoon(322)
+        val cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"))
+        cal.timeInMillis = nm
+        assertEquals("Should be January 18", 18, cal.get(Calendar.DAY_OF_MONTH))
+        assertTrue("Hour should be >= 17", cal.get(Calendar.HOUR_OF_DAY) >= 17)
+    }
+
+    @Test
+    fun `Dart anchor matches Kotlin anchor`() {
+        assertEquals(
+            "Anchor should match Dart value",
+            1674334380000L,
+            MeeusMoonCalculator.ANCHOR_NM_MS
+        )
+    }
 }

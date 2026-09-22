@@ -5,6 +5,15 @@ All notable changes to the Santali Calendar library will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.1] - 2026-09-22
+
+### Fixed
+
+- **Critical**: Lunar correction functions used wrong variables due to Kotlin data class destructuring being positional, not named. `newMoonCorrection` and `fullMoonCorrection` were using `t, t2, t3, t4, m` instead of `m, mp, f, om, e` — causing ~8.8 hour offset in computed new moon times
+- **Critical**: Wrong anchor new moon timestamp (`1674358980000` → `1674334380000`), off by ~6h50m from the correct 2023-01-22T02:23:00+05:30 value
+- `julianDayToUnixMs` now uses rounding instead of truncation to match Dart reference implementation
+- Mag 2026 Chandradarshan now correctly returns January 19 instead of January 18
+
 ## [1.0.0] - 2026-09-22
 
 ### Added
