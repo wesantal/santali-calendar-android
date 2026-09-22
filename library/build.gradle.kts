@@ -51,31 +51,23 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "org.wesantal"
             artifactId = "santali-calendar"
-            version = "1.0.1"
+            version = "1.0.2"
 
-            afterEvaluate {
-                from(components["release"])
-            }
+            afterEvaluate { from(components["release"]) }
 
             pom {
                 name.set("Santali Calendar")
                 description.set(
                     "An Ol Chiki (Santali) lunar calendar library for Android, " +
-                            "providing moon phase calculations, festival dates, " +
-                            "and Santali calendar month and day calculations."
+                        "providing moon phase calculations, festival dates, " +
+                        "and Santali calendar month and day calculations."
                 )
-                url.set(
-                    "https://github.com/wesantal/santali-calendar-android"
-                )
+                url.set("https://github.com/wesantal/santali-calendar-android")
 
                 licenses {
                     license {
-                        name.set(
-                            "The Apache Software License, Version 2.0"
-                        )
-                        url.set(
-                            "https://www.apache.org/licenses/LICENSE-2.0.txt"
-                        )
+                        name.set("The Apache Software License, Version 2.0")
+                        url.set("https://www.apache.org/licenses/LICENSE-2.0.txt")
                         distribution.set("repo")
                     }
                 }
@@ -90,17 +82,12 @@ publishing {
 
                 scm {
                     connection.set(
-                        "scm:git:https://github.com/wesantal/" +
-                                "santali-calendar-android.git"
+                        "scm:git:https://github.com/wesantal/" + "santali-calendar-android.git"
                     )
                     developerConnection.set(
-                        "scm:git:ssh://git@github.com/wesantal/" +
-                                "santali-calendar-android.git"
+                        "scm:git:ssh://git@github.com/wesantal/" + "santali-calendar-android.git"
                     )
-                    url.set(
-                        "https://github.com/wesantal/" +
-                                "santali-calendar-android"
-                    )
+                    url.set("https://github.com/wesantal/" + "santali-calendar-android")
                 }
             }
         }
@@ -116,19 +103,16 @@ publishing {
         maven {
             name = "MavenCentral"
 
-            url = uri(
-                "https://ossrh-staging-api.central.sonatype.com/" +
+            url =
+                uri(
+                    "https://ossrh-staging-api.central.sonatype.com/" +
                         "service/local/staging/deploy/maven2/"
-            )
+                )
 
             credentials {
-                username =
-                    providers.gradleProperty("mavenCentralUsername")
-                        .orNull
+                username = providers.gradleProperty("mavenCentralUsername").orNull
 
-                password =
-                    providers.gradleProperty("mavenCentralPassword")
-                        .orNull
+                password = providers.gradleProperty("mavenCentralPassword").orNull
             }
         }
 
@@ -138,34 +122,19 @@ publishing {
         maven {
             name = "Local"
 
-            url = uri(
-                rootProject.layout.buildDirectory
-                    .dir("maven-repo")
-            )
+            url = uri(rootProject.layout.buildDirectory.dir("maven-repo"))
         }
     }
 }
 
 signing {
-    val signingKey =
-        providers.gradleProperty("signingInMemoryKey").orNull
+    val signingKey = providers.gradleProperty("signingInMemoryKey").orNull
 
-    val signingPassword =
-        providers.gradleProperty(
-            "signingInMemoryKeyPassword"
-        ).orNull
+    val signingPassword = providers.gradleProperty("signingInMemoryKeyPassword").orNull
 
-    if (
-        signingKey != null &&
-        signingPassword != null
-    ) {
-        useInMemoryPgpKeys(
-            signingKey,
-            signingPassword,
-        )
+    if (signingKey != null && signingPassword != null) {
+        useInMemoryPgpKeys(signingKey, signingPassword)
 
-        sign(
-            publishing.publications["release"]
-        )
+        sign(publishing.publications["release"])
     }
 }

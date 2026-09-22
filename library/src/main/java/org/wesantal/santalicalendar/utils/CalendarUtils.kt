@@ -37,44 +37,53 @@ object CalendarUtils {
         prevMonth: SantaliMonth? = null,
         nextMonth: SantaliMonth? = null
     ): SantaliCalendarMonth {
-        val startDate = currentMonth.startDate
-        val dayCells = mutableListOf<SantaliCalendarDayCell>()
+        val cells = mutableListOf<SantaliCalendarDayCell>()
+        val firstDay = currentMonth.startDate
 
-        val startWeekDayIndex = DateUtils.getDayOfWeek(startDate)
+        val startWeekday = DateUtils.getDayOfWeek(firstDay)
 
-        if (prevMonth != null && startWeekDayIndex > 0) {
-            val prevMonthEnd = prevMonth.endDate
-            val startDay = prevMonth.totalDays - startWeekDayIndex + 1
-            for (day in startDay..prevMonth.totalDays) {
-                val daysFromEnd = prevMonth.totalDays - day + 1
-                val currentDate = DateUtils.addDays(prevMonthEnd, -daysFromEnd)
-                dayCells.add(createCalendarDay(day, currentDate, prevMonth, false))
+        if (prevMonth != null) {
+            val previousStart = prevMonth.startDate
+            val firstPreviousDay = (prevMonth.totalDays - startWeekday) + 1
+
+            for (day in firstPreviousDay..prevMonth.totalDays) {
+                val date = DateUtils.addDays(previousStart, day - 1)
+                val isPurnima = DateUtils.isSameDay(date, prevMonth.fullMoon)
+                cells.add(
+                    createCalendarDay(day, date, prevMonth, false)
+                )
             }
         } else {
-            for (index in 0  until startWeekDayIndex) {
-                dayCells.add(null)
+            for (i in 0 until startWeekday) {
+                cells.add(null)
             }
         }
 
         for (day in 1..currentMonth.totalDays) {
-            val currentDate = DateUtils.addDays(startDate, day - 1)
-            dayCells.add(createCalendarDay(day, currentDate, currentMonth, true))
+            val date = DateUtils.addDays(firstDay, day - 1)
+            val isPurnima = DateUtils.isSameDay(date, currentMonth.fullMoon)
+            cells.add(
+                createCalendarDay(day, date, currentMonth, true)
+            )
         }
 
-        val remainder = dayCells.size % 7
-        if (remainder != 0) {
-            val requiredCells = 7 - remainder
-            if (nextMonth != null) {
-                val nextMonthStart = nextMonth.startDate
-                for (day in 1..requiredCells) {
-                    val currentDate = DateUtils.addDays(nextMonthStart, day - 1)
-                    dayCells.add(createCalendarDay(day, currentDate, nextMonth, false))
-                }
-            } else {
-                for (index in 0 until requiredCells) {
-                    dayCells.add(null)
-                }
+        val remainder = cells.size % 7
+        if (remainder != 0 && nextMonth != null) {
+            val requiredDays = 7 - remainder
+            val nextStart = nextMonth.startDate
+
+            for (day in 1..requiredDays) {
+                if (day > nextMonth.totalDays) break
+                val date = DateUtils.addDays(nextStart, day - 1)
+                val isPurnima = DateUtils.isSameDay(date, nextMonth.fullMoon)
+                cells.add(
+                    createCalendarDay(day, date, nextMonth, false)
+                )
             }
+        }
+
+        while (cells.size % 7 != 0) {
+            cells.add(null)
         }
 
         return SantaliCalendarMonth(
@@ -89,7 +98,7 @@ object CalendarUtils {
             newMoonDate = currentMonth.newMoon,
             fullMoonDate = currentMonth.fullMoon,
             displayEndDate = currentMonth.displayEndDate,
-            days = dayCells
+            days = cells
         )
     }
 
