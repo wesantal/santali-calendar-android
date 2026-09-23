@@ -1,10 +1,11 @@
 package org.wesantal.santalicalendar
 
+import java.util.Date
+import kotlin.math.abs
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
 import org.wesantal.santalicalendar.utils.JulianDate
-import java.util.Date
 
 class JulianDateTest {
 
@@ -37,7 +38,7 @@ class JulianDateTest {
         val jd = 2451545.0
         val date = JulianDate.julianDayToDate(jd)
         val expected = Date(946728000000L)
-        assertTrue(Math.abs(expected.time - date.time) < 1000)
+        assertTrue(abs(expected.time - date.time) < 1000)
     }
 
     @Test

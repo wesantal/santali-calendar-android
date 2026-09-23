@@ -1,9 +1,9 @@
 package org.wesantal.santalicalendar.utils
 
-import org.wesantal.santalicalendar.core.DateTime
 import java.util.Calendar
 import java.util.Date
 import java.util.TimeZone
+import org.wesantal.santalicalendar.core.DateTime
 
 object DateUtils {
     const val MS_PER_DAY = 86400000L
@@ -21,7 +21,8 @@ object DateUtils {
 
     fun addDays(date: Date, days: Int): Date = DateTime.addDays(date, days)
 
-    fun addMilliseconds(date: Date, milliseconds: Long): Date = DateTime.addMilliseconds(date, milliseconds)
+    fun addMilliseconds(date: Date, milliseconds: Long): Date =
+        DateTime.addMilliseconds(date, milliseconds)
 
     fun startOfDay(date: Date): Date = DateTime.startOfDay(date)
 
@@ -31,11 +32,25 @@ object DateUtils {
 
     fun getDaysInMonth(year: Int, month: Int): Int = DateTime.getDaysInMonth(year, month)
 
-    fun createDate(year: Int, month: Int, day: Int, hours: Int = 0, minutes: Int = 0, seconds: Int = 0, milliseconds: Int = 0): Date =
-        DateTime.createDate(year, month, day, hours, minutes, seconds, milliseconds)
+    fun createDate(
+        year: Int,
+        month: Int,
+        day: Int,
+        hours: Int = 0,
+        minutes: Int = 0,
+        seconds: Int = 0,
+        milliseconds: Int = 0,
+    ): Date = DateTime.createDate(year, month, day, hours, minutes, seconds, milliseconds)
 
-    fun createUTCDate(year: Int, month: Int, day: Int, hours: Int = 0, minutes: Int = 0, seconds: Int = 0, milliseconds: Int = 0): Date =
-        DateTime.createUTCDate(year, month, day, hours, minutes, seconds, milliseconds)
+    fun createUTCDate(
+        year: Int,
+        month: Int,
+        day: Int,
+        hours: Int = 0,
+        minutes: Int = 0,
+        seconds: Int = 0,
+        milliseconds: Int = 0,
+    ): Date = DateTime.createUTCDate(year, month, day, hours, minutes, seconds, milliseconds)
 
     fun startOfSantaliDay(date: Date): Date {
         val istMs = date.time + IST_OFFSET_MS
@@ -46,12 +61,7 @@ object DateUtils {
         if (cal.get(Calendar.HOUR_OF_DAY) < 17) {
             day -= 1
         }
-        return createUTCDate(
-            cal.get(Calendar.YEAR),
-            cal.get(Calendar.MONTH),
-            day,
-            11, 30, 0, 0
-        )
+        return createUTCDate(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), day, 11, 30, 0, 0)
     }
 
     fun endOfSantaliDay(date: Date): Date = Date(startOfSantaliDay(date).time + MS_PER_DAY)
@@ -63,7 +73,7 @@ object DateUtils {
         val target = startOfSantaliDay(date).time
         val start = monthStart.time
         val end = monthEnd.time
-        if (target < start || target >= end) return 0
+        if (target !in start..<end) return 0
         return ((target - start) / MS_PER_DAY).toInt() + 1
     }
 
@@ -74,7 +84,10 @@ object DateUtils {
             cal.get(Calendar.YEAR),
             cal.get(Calendar.MONTH),
             cal.get(Calendar.DAY_OF_MONTH),
-            11, 30, 0, 0
+            11,
+            30,
+            0,
+            0,
         )
     }
 }

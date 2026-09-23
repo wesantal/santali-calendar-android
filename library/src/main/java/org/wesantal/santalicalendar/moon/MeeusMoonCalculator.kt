@@ -2,11 +2,6 @@ package org.wesantal.santalicalendar.moon
 
 import android.os.Build
 import androidx.annotation.RequiresApi
-import org.wesantal.santalicalendar.calendar.SantaliMonth
-import org.wesantal.santalicalendar.calendar.SantaliMonthId
-import org.wesantal.santalicalendar.core.DateTime
-import org.wesantal.santalicalendar.core.SantaliWeekDay
-import org.wesantal.santalicalendar.utils.DateUtils
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -14,6 +9,11 @@ import kotlin.math.cos
 import kotlin.math.floor
 import kotlin.math.round
 import kotlin.math.sin
+import org.wesantal.santalicalendar.calendar.SantaliMonth
+import org.wesantal.santalicalendar.calendar.SantaliMonthId
+import org.wesantal.santalicalendar.core.DateTime
+import org.wesantal.santalicalendar.core.SantaliWeekDay
+import org.wesantal.santalicalendar.utils.DateUtils
 
 object MeeusMoonCalculator {
     const val MS_PER_DAY = 86400000L
@@ -24,21 +24,22 @@ object MeeusMoonCalculator {
     val METONIC_LEAP_POS = setOf(1, 4, 7, 9, 12, 15, 18)
     const val ANCHOR_NM_MS = 1674334380000L // 2023-01-22T02:23:00+05:30
 
-    private val SANTALI_MONTHS_BASE = listOf(
-        SantaliMonthId.MAG,
-        SantaliMonthId.FAGUN,
-        SantaliMonthId.CHAAT,
-        SantaliMonthId.BAISAK,
-        SantaliMonthId.JHENT,
-        SantaliMonthId.ASHAL,
-        SantaliMonthId.SAAN,
-        SantaliMonthId.BHADOR,
-        SantaliMonthId.DASANY,
-        SantaliMonthId.SOHRAY,
-        SantaliMonthId.AGHAN,
-        SantaliMonthId.PUSH,
-        SantaliMonthId.SARCHA
-    )
+    private val SANTALI_MONTHS_BASE =
+        listOf(
+            SantaliMonthId.MAG,
+            SantaliMonthId.FAGUN,
+            SantaliMonthId.CHAAT,
+            SantaliMonthId.BAISAK,
+            SantaliMonthId.JHENT,
+            SantaliMonthId.ASHAL,
+            SantaliMonthId.SAAN,
+            SantaliMonthId.BHADOR,
+            SantaliMonthId.DASANY,
+            SantaliMonthId.SOHRAY,
+            SantaliMonthId.AGHAN,
+            SantaliMonthId.PUSH,
+            SantaliMonthId.SARCHA,
+        )
 
     private val newMoonChain = mutableListOf(ANCHOR_NM_MS)
 
@@ -54,7 +55,8 @@ object MeeusMoonCalculator {
 
     fun cosDeg(degrees: Double): Double = cos(degToRad(degrees))
 
-    private fun julianDayToUnixMs(jd: Double): Double = kotlin.math.round((jd - JULIAN_UNIX_EPOCH) * MS_PER_DAY)
+    private fun julianDayToUnixMs(jd: Double): Double =
+        kotlin.math.round((jd - JULIAN_UNIX_EPOCH) * MS_PER_DAY)
 
     fun unixMsToJulianDay(ms: Double): Double = ms / MS_PER_DAY + JULIAN_UNIX_EPOCH
 
@@ -75,7 +77,7 @@ object MeeusMoonCalculator {
         val mp: Double,
         val f: Double,
         val om: Double,
-        val e: Double
+        val e: Double,
     )
 
     private fun getLunarArguments(k: Double): LunarArguments {
@@ -85,12 +87,18 @@ object MeeusMoonCalculator {
         val t4 = t3 * t
 
         val m = normalizeDegrees(2.5534 + 29.1053567 * k - 0.0000014 * t2 - 0.00000011 * t3)
-        val mp = normalizeDegrees(201.5643 + 385.81693528 * k + 0.0107582 * t2 + 0.00001238 * t3 - 0.000000058 * t4)
-        val f = normalizeDegrees(160.7108 + 390.67050284 * k - 0.0016118 * t2 - 0.00000227 * t3 + 0.000000011 * t4)
+        val mp =
+            normalizeDegrees(
+                201.5643 + 385.81693528 * k + 0.0107582 * t2 + 0.00001238 * t3 - 0.000000058 * t4
+            )
+        val f =
+            normalizeDegrees(
+                160.7108 + 390.67050284 * k - 0.0016118 * t2 - 0.00000227 * t3 + 0.000000011 * t4
+            )
         val om = normalizeDegrees(124.7746 - 1.56375588 * k + 0.0020672 * t2 + 0.00000215 * t3)
         val e = 1 - 0.002516 * t - 0.0000074 * t2
 
-        return LunarArguments(t, t2, t3, t4,m, mp, f, om, e)
+        return LunarArguments(t, t2, t3, t4, m, mp, f, om, e)
     }
 
     private fun planetaryCorrection(t: Double, k: Double): Double {
@@ -110,19 +118,19 @@ object MeeusMoonCalculator {
         val a14 = 331.55 + 3.592518 * k
 
         return 0.000325 * sinDeg(a1) +
-                0.000165 * sinDeg(a2) +
-                0.000164 * sinDeg(a3) +
-                0.000126 * sinDeg(a4) +
-                0.00011 * sinDeg(a5) +
-                0.000062 * sinDeg(a6) +
-                0.00006 * sinDeg(a7) +
-                0.000056 * sinDeg(a8) +
-                0.000047 * sinDeg(a9) +
-                0.000042 * sinDeg(a10) +
-                0.00004 * sinDeg(a11) +
-                0.000037 * sinDeg(a12) +
-                0.000035 * sinDeg(a13) +
-                0.000023 * sinDeg(a14)
+            0.000165 * sinDeg(a2) +
+            0.000164 * sinDeg(a3) +
+            0.000126 * sinDeg(a4) +
+            0.00011 * sinDeg(a5) +
+            0.000062 * sinDeg(a6) +
+            0.00006 * sinDeg(a7) +
+            0.000056 * sinDeg(a8) +
+            0.000047 * sinDeg(a9) +
+            0.000042 * sinDeg(a10) +
+            0.00004 * sinDeg(a11) +
+            0.000037 * sinDeg(a12) +
+            0.000035 * sinDeg(a13) +
+            0.000023 * sinDeg(a14)
     }
 
     private fun newMoonCorrection(args: LunarArguments): Double {
@@ -132,30 +140,26 @@ object MeeusMoonCalculator {
         val om = args.om
         val e = args.e
         return -0.4072 * sinDeg(mp) +
-                0.17241 * e * sinDeg(m) +
-                0.01608 * sinDeg(2 * mp) +
-                0.01039 * sinDeg(2 * f) +
-                0.00739 * e * sinDeg(mp - m) -
-                0.00514 * e * sinDeg(mp + m) +
-                0.00208 * e * e * sinDeg(2 * m) -
-                0.00111 * sinDeg(mp - 2 * f) -
-                0.00057 * sinDeg(mp + 2 * f) +
-                0.00056 * e * sinDeg(2 * mp + m) -
-                0.00042 * sinDeg(3 * mp) +
-                0.00042 * e * sinDeg(m + 2 * f) +
-                0.00038 * e * sinDeg(m - 2 * f) -
-                0.00024 * e * sinDeg(2 * mp - m) -
-                0.00017 * sinDeg(om) -
-                0.00007 * sinDeg(mp + 2 * m) +
-                0.00004 * sinDeg(2 * mp - 2 * f) +
-                0.00004 * sinDeg(3 * m) +
-                0.00003 * sinDeg(mp + m - 2 * f) +
-                0.00003 * sinDeg(2 * mp + 2 * f) -
-                0.00003 * sinDeg(mp + m + 2 * f) +
-                0.00003 * sinDeg(mp - m + 2 * f) -
-                0.00002 * sinDeg(mp - m - 2 * f) -
-                0.00002 * sinDeg(3 * mp + m) +
-                0.00002 * sinDeg(4 * mp)
+            0.17241 * e * sinDeg(m) +
+            0.01608 * sinDeg(2 * mp) +
+            0.01039 * sinDeg(2 * f) +
+            0.00739 * e * sinDeg(mp - m) - 0.00514 * e * sinDeg(mp + m) +
+            0.00208 * e * e * sinDeg(2 * m) -
+            0.00111 * sinDeg(mp - 2 * f) -
+            0.00057 * sinDeg(mp + 2 * f) + 0.00056 * e * sinDeg(2 * mp + m) -
+            0.00042 * sinDeg(3 * mp) +
+            0.00042 * e * sinDeg(m + 2 * f) +
+            0.00038 * e * sinDeg(m - 2 * f) -
+            0.00024 * e * sinDeg(2 * mp - m) -
+            0.00017 * sinDeg(om) -
+            0.00007 * sinDeg(mp + 2 * m) +
+            0.00004 * sinDeg(2 * mp - 2 * f) +
+            0.00004 * sinDeg(3 * m) +
+            0.00003 * sinDeg(mp + m - 2 * f) +
+            0.00003 * sinDeg(2 * mp + 2 * f) - 0.00003 * sinDeg(mp + m + 2 * f) +
+            0.00003 * sinDeg(mp - m + 2 * f) -
+            0.00002 * sinDeg(mp - m - 2 * f) -
+            0.00002 * sinDeg(3 * mp + m) + 0.00002 * sinDeg(4 * mp)
     }
 
     private fun fullMoonCorrection(args: LunarArguments): Double {
@@ -165,30 +169,26 @@ object MeeusMoonCalculator {
         val om = args.om
         val e = args.e
         return -0.40614 * sinDeg(mp) +
-                0.17302 * e * sinDeg(m) +
-                0.01614 * sinDeg(2 * mp) +
-                0.01043 * sinDeg(2 * f) +
-                0.00734 * e * sinDeg(mp - m) -
-                0.00515 * e * sinDeg(mp + m) +
-                0.00209 * e * e * sinDeg(2 * m) -
-                0.00111 * sinDeg(mp - 2 * f) -
-                0.00057 * sinDeg(mp + 2 * f) +
-                0.00056 * e * sinDeg(2 * mp + m) -
-                0.00042 * sinDeg(3 * mp) +
-                0.00042 * e * sinDeg(m + 2 * f) +
-                0.00038 * e * sinDeg(m - 2 * f) -
-                0.00024 * e * sinDeg(2 * mp - m) -
-                0.00017 * sinDeg(om) -
-                0.00007 * sinDeg(mp + 2 * m) +
-                0.00004 * sinDeg(2 * mp - 2 * f) +
-                0.00004 * sinDeg(3 * m) +
-                0.00003 * sinDeg(mp + m - 2 * f) +
-                0.00003 * sinDeg(2 * mp + 2 * f) -
-                0.00003 * sinDeg(mp + m + 2 * f) +
-                0.00003 * sinDeg(mp - m + 2 * f) -
-                0.00002 * sinDeg(mp - m - 2 * f) -
-                0.00002 * sinDeg(3 * mp + m) +
-                0.00002 * sinDeg(4 * mp)
+            0.17302 * e * sinDeg(m) +
+            0.01614 * sinDeg(2 * mp) +
+            0.01043 * sinDeg(2 * f) +
+            0.00734 * e * sinDeg(mp - m) - 0.00515 * e * sinDeg(mp + m) +
+            0.00209 * e * e * sinDeg(2 * m) -
+            0.00111 * sinDeg(mp - 2 * f) -
+            0.00057 * sinDeg(mp + 2 * f) + 0.00056 * e * sinDeg(2 * mp + m) -
+            0.00042 * sinDeg(3 * mp) +
+            0.00042 * e * sinDeg(m + 2 * f) +
+            0.00038 * e * sinDeg(m - 2 * f) -
+            0.00024 * e * sinDeg(2 * mp - m) -
+            0.00017 * sinDeg(om) -
+            0.00007 * sinDeg(mp + 2 * m) +
+            0.00004 * sinDeg(2 * mp - 2 * f) +
+            0.00004 * sinDeg(3 * m) +
+            0.00003 * sinDeg(mp + m - 2 * f) +
+            0.00003 * sinDeg(2 * mp + 2 * f) - 0.00003 * sinDeg(mp + m + 2 * f) +
+            0.00003 * sinDeg(mp - m + 2 * f) -
+            0.00002 * sinDeg(mp - m - 2 * f) -
+            0.00002 * sinDeg(3 * mp + m) + 0.00002 * sinDeg(4 * mp)
     }
 
     private fun getBaseJDE(k: Double): Double {
@@ -196,11 +196,8 @@ object MeeusMoonCalculator {
         val t2 = t * t
         val t3 = t2 * t
         val t4 = t3 * t
-        return 2451550.09765 +
-                29.530588853 * k +
-                0.0001337 * t2 -
-                0.00000015 * t3 +
-                0.00000000073 * t4
+        return 2451550.09765 + 29.530588853 * k + 0.0001337 * t2 - 0.00000015 * t3 +
+            0.00000000073 * t4
     }
 
     fun getNewMoon(k: Long): Long {
@@ -361,11 +358,7 @@ object MeeusMoonCalculator {
             val totalDays = round((endMs - startMs).toDouble() / MS_PER_DAY).toInt()
             val dayDuration = (endMs - startMs).toDouble() / totalDays
 
-            val actualFullMoonMs = if (fullMoonMs != null) {
-                fullMoonMs
-            } else {
-                startMs + (totalDays / 2.0 * MS_PER_DAY).toLong()
-            }
+            val actualFullMoonMs = fullMoonMs ?: (startMs + (totalDays / 2.0 * MS_PER_DAY).toLong())
             val kunamiDay = getPurnimaDayNum(startMs, endMs, actualFullMoonMs)
             val kunamiStartMs = startMs + (kunamiDay - 1) * dayDuration
 
@@ -381,7 +374,7 @@ object MeeusMoonCalculator {
                     fullMoon = Date(kunamiStartMs.toLong()),
                     endDate = Date(endMs),
                     totalDays = totalDays,
-                    displayEndDate = Date(endMs - MS_PER_DAY)
+                    displayEndDate = Date(endMs - MS_PER_DAY),
                 )
             )
 
@@ -485,7 +478,8 @@ object MeeusMoonCalculator {
         val day = ((targetMs - startMs) / dayDuration).toInt() + 1
         val clampedDay = day.coerceIn(1, totalDays)
 
-        val isPurnima = DateUtils.formatDateString(date) == DateUtils.formatDateString(month.fullMoon)
+        val isPurnima =
+            DateUtils.formatDateString(date) == DateUtils.formatDateString(month.fullMoon)
         val isAmavasya = DateUtils.isSameDay(date, month.newMoon)
 
         return org.wesantal.santalicalendar.calendar.SantaliDate(
@@ -496,7 +490,7 @@ object MeeusMoonCalculator {
             isPurnima = isPurnima,
             isAmavasya = isAmavasya,
             isLeapMonth = month.isLeapMonth,
-            isFirstMoonDay = clampedDay == 1
+            isFirstMoonDay = clampedDay == 1,
         )
     }
 
@@ -510,7 +504,10 @@ object MeeusMoonCalculator {
             cal.get(java.util.Calendar.YEAR),
             cal.get(java.util.Calendar.MONTH),
             cal.get(java.util.Calendar.DAY_OF_MONTH),
-            11, 30, 0, 0
+            11,
+            30,
+            0,
+            0,
         )
     }
 
@@ -523,17 +520,20 @@ object MeeusMoonCalculator {
 
         var months = getSantaliMonths(year)
         for (month in months) {
-            if (targetMs >= month.startDate.time && targetMs < month.endDate.time) return month.index
+            if (targetMs >= month.startDate.time && targetMs < month.endDate.time)
+                return month.index
         }
 
         months = getSantaliMonths(year - 1)
         for (month in months) {
-            if (targetMs >= month.startDate.time && targetMs < month.endDate.time) return month.index
+            if (targetMs >= month.startDate.time && targetMs < month.endDate.time)
+                return month.index
         }
 
         months = getSantaliMonths(year + 1)
         for (month in months) {
-            if (targetMs >= month.startDate.time && targetMs < month.endDate.time) return month.index
+            if (targetMs >= month.startDate.time && targetMs < month.endDate.time)
+                return month.index
         }
 
         return 0

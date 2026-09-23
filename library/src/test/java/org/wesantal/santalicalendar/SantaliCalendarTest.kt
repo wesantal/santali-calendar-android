@@ -1,12 +1,12 @@
 package org.wesantal.santalicalendar
 
+import java.util.Calendar
+import java.util.Date
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Test
-import java.util.Calendar
-import java.util.Date
 
 class SantaliCalendarTest {
 
@@ -35,7 +35,7 @@ class SantaliCalendarTest {
         for (i in 1 until months.size) {
             assertTrue(
                 "Month ${months[i].index} should start after month ${months[i - 1].index}",
-                months[i].startDate.time >= months[i - 1].startDate.time
+                months[i].startDate.time >= months[i - 1].startDate.time,
             )
         }
     }
@@ -115,7 +115,7 @@ class SantaliCalendarTest {
         for (i in 1 until festivals.size) {
             assertTrue(
                 "Festival $i should be after festival ${i - 1}",
-                festivals[i].date.time >= festivals[i - 1].date.time
+                festivals[i].date.time >= festivals[i - 1].date.time,
             )
         }
     }
@@ -123,10 +123,10 @@ class SantaliCalendarTest {
     @Test
     fun `getFestivals have valid data`() {
         val festivals = calendar.getFestivals(2024)
-        for (festival in festivals) {
-            assertTrue("Festival id should not be empty", festival.id.isNotEmpty())
-            assertTrue("Festival name should not be empty", festival.name.isNotEmpty())
-            assertTrue("Festival roman should not be empty", festival.roman.isNotEmpty())
+        for ((id, name, roman) in festivals) {
+            assertTrue("Festival id should not be empty", id.isNotEmpty())
+            assertTrue("Festival name should not be empty", name.isNotEmpty())
+            assertTrue("Festival roman should not be empty", roman.isNotEmpty())
         }
     }
 
@@ -141,20 +141,26 @@ class SantaliCalendarTest {
 
     @Test
     fun `resolveFestival for fixed gregorian festival`() {
-        val definition = org.wesantal.santalicalendar.festival.FestivalData.santaliFestivals
-            .first { it.rule is org.wesantal.santalicalendar.festival.SantaliFestivalRule.FixedGregorian }
+        val definition =
+            org.wesantal.santalicalendar.festival.FestivalData.santaliFestivals.first {
+                it.rule is org.wesantal.santalicalendar.festival.SantaliFestivalRule.FixedGregorian
+            }
         val festival = calendar.resolveFestival(definition, 2024)
         assertNotNull(festival.date)
         val cal = Calendar.getInstance()
         cal.time = festival.date
-        val rule = definition.rule as org.wesantal.santalicalendar.festival.SantaliFestivalRule.FixedGregorian
+        val rule =
+            definition.rule
+                as org.wesantal.santalicalendar.festival.SantaliFestivalRule.FixedGregorian
         assertEquals(rule.day, cal.get(Calendar.DAY_OF_MONTH))
     }
 
     @Test
     fun `resolveFestival for moon relative festival`() {
-        val definition = org.wesantal.santalicalendar.festival.FestivalData.santaliFestivals
-            .first { it.rule is org.wesantal.santalicalendar.festival.SantaliFestivalRule.MoonRelative }
+        val definition =
+            org.wesantal.santalicalendar.festival.FestivalData.santaliFestivals.first {
+                it.rule is org.wesantal.santalicalendar.festival.SantaliFestivalRule.MoonRelative
+            }
         val festival = calendar.resolveFestival(definition, 2024)
         assertNotNull(festival.date)
     }

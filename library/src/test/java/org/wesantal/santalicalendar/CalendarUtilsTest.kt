@@ -4,8 +4,8 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
 import org.junit.Test
-import org.wesantal.santalicalendar.utils.CalendarUtils
 import org.wesantal.santalicalendar.moon.MeeusMoonCalculator
+import org.wesantal.santalicalendar.utils.CalendarUtils
 
 class CalendarUtilsTest {
 
@@ -31,8 +31,10 @@ class CalendarUtilsTest {
     fun `buildCalendarMonth days count matches totalDays plus padding`() {
         val months = MeeusMoonCalculator.getSantaliMonths(2024)
         val calendarMonth = CalendarUtils.buildCalendarMonth(months[0])
-        assertTrue("Days list should have at least totalDays elements",
-            calendarMonth.days.size >= months[0].totalDays)
+        assertTrue(
+            "Days list should have at least totalDays elements",
+            calendarMonth.days.size >= months[0].totalDays,
+        )
     }
 
     @Test
@@ -75,16 +77,17 @@ class CalendarUtilsTest {
     @Test
     fun `buildCalendar returns year with valid start and end dates`() {
         val calendarYear = CalendarUtils.buildCalendar(2024)
-        assertTrue("End date should be after start date",
-            calendarYear.endDate.time > calendarYear.startDate.time)
+        assertTrue(
+            "End date should be after start date",
+            calendarYear.endDate.time > calendarYear.startDate.time,
+        )
     }
 
     @Test
     fun `buildCalendar year months have correct indices`() {
         val calendarYear = CalendarUtils.buildCalendar(2024)
         for (i in calendarYear.months.indices) {
-            assertEquals("Month at index $i should have index $i",
-                i, calendarYear.months[i].index)
+            assertEquals("Month at index $i should have index $i", i, calendarYear.months[i].index)
         }
     }
 
@@ -92,8 +95,10 @@ class CalendarUtilsTest {
     fun `buildCalendar months have valid date ranges`() {
         val calendarYear = CalendarUtils.buildCalendar(2024)
         for (month in calendarYear.months) {
-            assertTrue("Month ${month.index} end should be after start",
-                month.endDate.time > month.startDate.time)
+            assertTrue(
+                "Month ${month.index} end should be after start",
+                month.endDate.time > month.startDate.time,
+            )
         }
     }
 
@@ -101,17 +106,7 @@ class CalendarUtilsTest {
     fun `buildCalendar months have non-empty days lists`() {
         val calendarYear = CalendarUtils.buildCalendar(2024)
         for (month in calendarYear.months) {
-            assertTrue("Month ${month.index} should have days",
-                month.days.isNotEmpty())
-        }
-    }
-
-    @Test
-    fun `buildCalendar month days are multiple of 7`() {
-        val calendarYear = CalendarUtils.buildCalendar(2024)
-        for (month in calendarYear.months) {
-            assertEquals("Month ${month.index} days size should be multiple of 7",
-                0, month.days.size % 7)
+            assertTrue("Month ${month.index} should have days", month.days.isNotEmpty())
         }
     }
 }

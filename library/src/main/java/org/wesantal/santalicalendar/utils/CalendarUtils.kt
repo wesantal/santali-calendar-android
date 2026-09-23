@@ -1,5 +1,6 @@
 package org.wesantal.santalicalendar.utils
 
+import java.util.Date
 import org.wesantal.santalicalendar.calendar.SantaliCalendarDay
 import org.wesantal.santalicalendar.calendar.SantaliCalendarDayCell
 import org.wesantal.santalicalendar.calendar.SantaliCalendarMonth
@@ -8,14 +9,13 @@ import org.wesantal.santalicalendar.calendar.SantaliMonth
 import org.wesantal.santalicalendar.core.SantaliWeekDay
 import org.wesantal.santalicalendar.core.WeekDay
 import org.wesantal.santalicalendar.moon.MeeusMoonCalculator
-import java.util.Date
 
 object CalendarUtils {
     private fun createCalendarDay(
         santaliDay: Int,
         currentDate: Date,
         month: SantaliMonth,
-        isCurrentMonth: Boolean
+        isCurrentMonth: Boolean,
     ): SantaliCalendarDay {
         val weekIndex = DateUtils.getDayOfWeek(currentDate)
         return SantaliCalendarDay(
@@ -28,61 +28,92 @@ object CalendarUtils {
             isToday = DateUtils.isSameDay(currentDate, Date()),
             isAmavasya = santaliDay == month.totalDays,
             isPurnima = DateUtils.isSameDay(currentDate, month.fullMoon),
-            isCurrentMonth = isCurrentMonth
+            isCurrentMonth = isCurrentMonth,
         )
     }
+
+    private const val COLUMNS = 7
+    private const val MIN_ROWS = 5
+    private const val TOTAL_CELLS = COLUMNS * MIN_ROWS
 
     fun buildCalendarMonth(
         currentMonth: SantaliMonth,
         prevMonth: SantaliMonth? = null,
-        nextMonth: SantaliMonth? = null
+        nextMonth: SantaliMonth? = null,
     ): SantaliCalendarMonth {
-        val cells = mutableListOf<SantaliCalendarDayCell>()
-        val firstDay = currentMonth.startDate
 
+        val cells = mutableListOf<SantaliCalendarDayCell>()
+
+        val firstDay = currentMonth.startDate
         val startWeekday = DateUtils.getDayOfWeek(firstDay)
 
+        // Previous month cells
         if (prevMonth != null) {
-            val previousStart = prevMonth.startDate
-            val firstPreviousDay = (prevMonth.totalDays - startWeekday) + 1
+            val firstPreviousDay = prevMonth.totalDays - startWeekday + 1
 
             for (day in firstPreviousDay..prevMonth.totalDays) {
-                val date = DateUtils.addDays(previousStart, day - 1)
-                val isPurnima = DateUtils.isSameDay(date, prevMonth.fullMoon)
+                val date = DateUtils.addDays(prevMonth.startDate, day - 1)
+
                 cells.add(
-                    createCalendarDay(day, date, prevMonth, false)
+                    createCalendarDay(
+                        santaliDay = day,
+                        currentDate = date,
+                        month = prevMonth,
+                        isCurrentMonth = false,
+                    )
                 )
             }
         } else {
-            for (i in 0 until startWeekday) {
+            repeat(startWeekday) { cells.add(null) }
+        }
+
+        // Current month
+        for (day in 1..currentMonth.totalDays) {
+            val date = DateUtils.addDays(currentMonth.startDate, day - 1)
+
+            cells.add(
+                createCalendarDay(
+                    santaliDay = day,
+                    currentDate = date,
+                    month = currentMonth,
+                    isCurrentMonth = true,
+                )
+            )
+        }
+
+        // Next month
+        if (nextMonth != null) {
+            var nextDay = 1
+
+            while (cells.size % COLUMNS != 0) {
+
+                if (nextDay <= nextMonth.totalDays) {
+                    val date = DateUtils.addDays(nextMonth.startDate, nextDay - 1)
+
+                    cells.add(
+                        createCalendarDay(
+                            santaliDay = nextDay,
+                            currentDate = date,
+                            month = nextMonth,
+                            isCurrentMonth = false,
+                        )
+                    )
+
+                    nextDay++
+                } else {
+                    cells.add(null)
+                }
+            }
+        } else {
+            while (cells.size % COLUMNS != 0) {
                 cells.add(null)
             }
         }
 
-        for (day in 1..currentMonth.totalDays) {
-            val date = DateUtils.addDays(firstDay, day - 1)
-            val isPurnima = DateUtils.isSameDay(date, currentMonth.fullMoon)
-            cells.add(
-                createCalendarDay(day, date, currentMonth, true)
-            )
-        }
+        // Minimum 5 rows
+        val minimumCells = MIN_ROWS * COLUMNS
 
-        val remainder = cells.size % 7
-        if (remainder != 0 && nextMonth != null) {
-            val requiredDays = 7 - remainder
-            val nextStart = nextMonth.startDate
-
-            for (day in 1..requiredDays) {
-                if (day > nextMonth.totalDays) break
-                val date = DateUtils.addDays(nextStart, day - 1)
-                val isPurnima = DateUtils.isSameDay(date, nextMonth.fullMoon)
-                cells.add(
-                    createCalendarDay(day, date, nextMonth, false)
-                )
-            }
-        }
-
-        while (cells.size % 7 != 0) {
+        while (cells.size < minimumCells) {
             cells.add(null)
         }
 
@@ -98,29 +129,27 @@ object CalendarUtils {
             newMoonDate = currentMonth.newMoon,
             fullMoonDate = currentMonth.fullMoon,
             displayEndDate = currentMonth.displayEndDate,
-            days = cells
+            days = cells,
         )
     }
 
     fun buildCalendar(year: Int): SantaliCalendarYear {
         val months = MeeusMoonCalculator.getSantaliMonths(year)
         val yearMonths = months.mapIndexed { index, month ->
-            buildCalendarMonth(
-                month,
-                months.getOrNull(index - 1),
-                months.getOrNull(index + 1)
-            )
+            buildCalendarMonth(month, months.getOrNull(index - 1), months.getOrNull(index + 1))
         }
         val currentMonthIndex = MeeusMoonCalculator.getCalendarMonthIndex(Date())
-        val startDate = months.firstOrNull()?.startDate ?: throw IllegalStateException("No months computed")
-        val endDate = months.lastOrNull()?.endDate ?: throw IllegalStateException("No months computed")
+        val startDate =
+            months.firstOrNull()?.startDate ?: throw IllegalStateException("No months computed")
+        val endDate =
+            months.lastOrNull()?.endDate ?: throw IllegalStateException("No months computed")
 
         return SantaliCalendarYear(
             year = year,
             months = yearMonths,
             currentMonthIndex = currentMonthIndex,
             startDate = startDate,
-            endDate = endDate
+            endDate = endDate,
         )
     }
 }

@@ -24,32 +24,30 @@ class FestivalDataTest {
 
     @Test
     fun `all festivals have non-empty names`() {
-        for (festival in FestivalData.santaliFestivals) {
-            assertTrue("Festival ${festival.id} should have non-empty name", festival.name.isNotEmpty())
+        for ((id, name) in FestivalData.santaliFestivals) {
+            assertTrue("Festival $id should have non-empty name", name.isNotEmpty())
         }
     }
 
     @Test
     fun `all festivals have non-empty roman names`() {
-        for (festival in FestivalData.santaliFestivals) {
-            assertTrue("Festival ${festival.id} should have non-empty roman name", festival.roman.isNotEmpty())
+        for ((id, _, roman) in FestivalData.santaliFestivals) {
+            assertTrue("Festival $id should have non-empty roman name", roman.isNotEmpty())
         }
     }
 
     @Test
     fun `all festivals have valid types`() {
         val validTypes = SantaliFestivalType.entries.toSet()
-        for (festival in FestivalData.santaliFestivals) {
-            assertTrue("Festival ${festival.id} should have valid type",
-                validTypes.contains(festival.type))
+        for ((id, _, _, type) in FestivalData.santaliFestivals) {
+            assertTrue("Festival $id should have valid type", validTypes.contains(type))
         }
     }
 
     @Test
     fun `FixedGregorian festivals have valid month and day`() {
-        val fixedFestivals = FestivalData.santaliFestivals.filter {
-            it.rule is SantaliFestivalRule.FixedGregorian
-        }
+        val fixedFestivals =
+            FestivalData.santaliFestivals.filter { it.rule is SantaliFestivalRule.FixedGregorian }
         for (festival in fixedFestivals) {
             val rule = festival.rule as SantaliFestivalRule.FixedGregorian
             assertTrue("Month should be 1-12, got ${rule.month}", rule.month in 1..12)
@@ -59,9 +57,8 @@ class FestivalDataTest {
 
     @Test
     fun `MoonRelative festivals have valid month ids`() {
-        val moonFestivals = FestivalData.santaliFestivals.filter {
-            it.rule is SantaliFestivalRule.MoonRelative
-        }
+        val moonFestivals =
+            FestivalData.santaliFestivals.filter { it.rule is SantaliFestivalRule.MoonRelative }
         for (festival in moonFestivals) {
             val rule = festival.rule as SantaliFestivalRule.MoonRelative
             assertNotNull("Month ID should not be null", rule.monthId)
@@ -123,7 +120,13 @@ class FestivalDataTest {
         assertTrue("Should have OBSERVANCE type", types.contains(SantaliFestivalType.OBSERVANCE))
         assertTrue("Should have CULTURAL type", types.contains(SantaliFestivalType.CULTURAL))
         assertTrue("Should have COMMUNITY type", types.contains(SantaliFestivalType.COMMUNITY))
-        assertTrue("Should have BIRTH_ANNIVERSARY type", types.contains(SantaliFestivalType.BIRTH_ANNIVERSARY))
-        assertTrue("Should have DEATH_ANNIVERSARY type", types.contains(SantaliFestivalType.DEATH_ANNIVERSARY))
+        assertTrue(
+            "Should have BIRTH_ANNIVERSARY type",
+            types.contains(SantaliFestivalType.BIRTH_ANNIVERSARY),
+        )
+        assertTrue(
+            "Should have DEATH_ANNIVERSARY type",
+            types.contains(SantaliFestivalType.DEATH_ANNIVERSARY),
+        )
     }
 }
