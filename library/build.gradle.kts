@@ -6,7 +6,7 @@ plugins {
 
 android {
     namespace = "org.wesantal.santalicalendar"
-    compileSdk = 37
+    compileSdk = 36
 
     defaultConfig {
         minSdk = 23
@@ -51,7 +51,7 @@ publishing {
         register<MavenPublication>("release") {
             groupId = "org.wesantal"
             artifactId = "santali-calendar"
-            version = "1.0.3"
+            version = "1.0.4"
 
             afterEvaluate { from(components["release"]) }
 
@@ -121,7 +121,6 @@ publishing {
          */
         maven {
             name = "Local"
-
             url = uri(rootProject.layout.buildDirectory.dir("maven-repo"))
         }
     }
@@ -134,7 +133,6 @@ signing {
 
     if (signingKey != null && signingPassword != null) {
         useInMemoryPgpKeys(signingKey, signingPassword)
-
         sign(publishing.publications["release"])
     }
 }

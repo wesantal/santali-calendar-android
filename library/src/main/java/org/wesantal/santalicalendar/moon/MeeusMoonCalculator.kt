@@ -1,7 +1,5 @@
 package org.wesantal.santalicalendar.moon
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.util.Date
 import kotlin.math.abs
 import kotlin.math.ceil
@@ -441,7 +439,6 @@ object MeeusMoonCalculator {
         return getMonthFromIndex(getMonthIndex(date))
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getDate(date: Date = Date()): org.wesantal.santalicalendar.calendar.SantaliDate {
         val targetMs = date.time
         val cal = java.util.Calendar.getInstance()
@@ -468,7 +465,7 @@ object MeeusMoonCalculator {
         }
 
         if (month == null) {
-            throw IllegalStateException("Unable to determine Santali date for ${date.toInstant()}")
+            throw IllegalStateException("Unable to determine Santali date for $date")
         }
 
         val startMs = month.startDate.time
@@ -494,7 +491,6 @@ object MeeusMoonCalculator {
         )
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getToday(): org.wesantal.santalicalendar.calendar.SantaliDate = getDate(Date())
 
     fun getSantaliDayStart(date: Date): Date {

@@ -1,7 +1,5 @@
 package org.wesantal.santalicalendar
 
-import android.os.Build
-import androidx.annotation.RequiresApi
 import java.util.Date
 import org.wesantal.santalicalendar.calendar.SantaliCalendarMonth
 import org.wesantal.santalicalendar.calendar.SantaliCalendarYear
@@ -79,13 +77,10 @@ class SantaliCalendar {
         return calendar
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getDate(date: Date = Date()): SantaliDate = MeeusMoonCalculator.getDate(date)
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getSantaliToday(): SantaliDate = MeeusMoonCalculator.getToday()
 
-    @RequiresApi(Build.VERSION_CODES.O)
     fun getToday(): SantaliDate {
         val dt = DateUtils.endOfDay(Date())
         return MeeusMoonCalculator.getDate(dt)

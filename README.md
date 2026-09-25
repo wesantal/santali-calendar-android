@@ -22,7 +22,7 @@ An Ol Chiki (Santali) lunar calendar library for Android, providing accurate moo
 ```kotlin
 // build.gradle.kts
 dependencies {
-    implementation("org.wesantal:santali-calendar:1.0.0")
+    implementation("org.wesantal:santali-calendar:1.0.4")
 }
 ```
 
@@ -37,7 +37,7 @@ repositories {
     mavenLocal()
 }
 dependencies {
-    implementation("org.wesantal:santali-calendar:1.0.0")
+    implementation("org.wesantal:santali-calendar:1.0.4")
 }
 ```
 
@@ -76,7 +76,7 @@ The main entry point. Create an instance to access calendar operations.
 
 | Method | Description |
 |---|---|
-| `getToday()` | Returns today's Santali date (requires API 26+) |
+| `getToday()` | Returns today's Santali date |
 | `getDate(date)` | Converts a `java.util.Date` to Santali date |
 | `getMonths(year)` | Returns all Santali months for a Gregorian year |
 | `getCalendar(year)` | Returns full calendar year with day grid |
@@ -230,7 +230,7 @@ JulianDate.julianDayToDate(jd)        // java.util.Date
 ## Requirements
 
 - **Min SDK**: 23 (Android 6.0)
-- **Compile SDK**: 35
+- **Compile SDK**: 37
 - **Java**: 11+
 - **Kotlin**: 1.9+
 

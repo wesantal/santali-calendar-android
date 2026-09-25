@@ -5,6 +5,25 @@ All notable changes to the Santali Calendar library will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.4] - 2026-09-25
+
+### Fixed
+
+- Full Android 6.0 (SDK 23) support: removed all `@RequiresApi(Build.VERSION_CODES.O)` annotations from `SantaliCalendar.getDate()`, `getToday()`, `getSantaliToday()` and `MeeusMoonCalculator.getDate()`, `getToday()`
+- Replaced API 26-only `Date.toInstant()` call in `MeeusMoonCalculator.getDate()` error path with SDK 23-safe `Date.toString()`
+- Verified with `lintRelease`: zero `NewApi` issues; all date logic uses only `java.util.Calendar` / `java.util.Date` / `SimpleDateFormat`
+
+### Changed
+
+- Compile SDK documented correctly as 37 in README (was 35)
+- Removed stale "(requires API 26+)" note for `getToday()` in README
+
+## [1.0.3] - 2026-09-23
+
+### Fixed
+
+- Date/month resolution fixes across `SantaliCalendar`, `MeeusMoonCalculator`, `CalendarUtils`, and `DateUtils` (calendar grid and festival date corrections)
+
 ## [1.0.2] - 2026-09-22
 
 ### Fixed
